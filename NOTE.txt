@@ -1,0 +1,41 @@
+
+Trong đoạn mã, các biến key[32] và nonce[16] có ý nghĩa như sau:
+
+1. key[32]
+Ý nghĩa: Đây là khóa bí mật dùng cho thuật toán mã hóa AES-256.
+Kích thước: 32 bytes (256 bits), phù hợp với tiêu chuẩn của AES-256.
+Vai trò:
+Được sử dụng để tạo ra các round keys (khóa vòng) thông qua hàm key_expansion().
+Các round keys này được sử dụng trong từng vòng mã hóa/giải mã của AES.
+Lưu ý: Khóa này phải được giữ bí mật tuyệt đối, vì nếu bị lộ, dữ liệu mã hóa có thể bị giải mã.
+2. nonce[16]
+Ý nghĩa: Đây là giá trị khởi tạo (Initialization Vector - IV) hoặc nonce (number used once) dùng trong chế độ mã hóa CTR (Counter Mode).
+Kích thước: 16 bytes (128 bits), phù hợp với kích thước khối của AES.
+Vai trò:
+Được sử dụng để tạo ra các counter blocks (khối đếm) trong chế độ CTR.
+Mỗi khối dữ liệu được mã hóa bằng cách XOR với một khối mã hóa của nonce và giá trị đếm (counter).
+Đảm bảo rằng mỗi lần mã hóa, ngay cả khi dữ liệu giống nhau, kết quả mã hóa sẽ khác nhau (tính ngẫu nhiên).
+Lưu ý:
+nonce không cần bí mật, nhưng phải duy nhất cho mỗi lần mã hóa để tránh lặp lại đầu ra mã hóa.
+Tóm lại:
+key[32]: Khóa bí mật dùng để mã hóa/giải mã.
+nonce[16]: Giá trị khởi tạo duy nhất cho chế độ CTR, đảm bảo tính ngẫu nhiên và an toàn của mã hóa.
+
+Trong chế độ CTR (Counter Mode) được sử dụng trong đoạn mã của bạn, độ dài của len có thể bất kỳ (không cần phải là bội số của 16 bytes). Điều này là một trong những ưu điểm chính của chế độ CTR so với các chế độ khác như ECB hoặc CBC.
+
+Giải thích:
+Chế độ CTR hoạt động trên từng byte của dữ liệu:
+
+Trong chế độ CTR, dữ liệu được chia thành các khối 16 bytes (kích thước khối của AES).
+Nếu dữ liệu không đủ 16 bytes ở khối cuối cùng, chỉ các byte cần thiết sẽ được xử lý.
+Cách xử lý trong mã:
+
+Hàm aes256_ctr_xcrypt sử dụng một bộ đếm (counter) để tạo ra các khối mã hóa (keystream) 16 bytes.
+Dữ liệu được XOR với keystream này từng byte một, bất kể độ dài của dữ liệu.
+Nếu dữ liệu dài hơn 16 bytes, bộ đếm sẽ tăng và tạo ra keystream mới cho các khối tiếp theo.
+Khối cuối cùng:
+
+Nếu len không phải là bội số của 16, khối cuối cùng sẽ chỉ sử dụng số byte cần thiết từ keystream.
+Kết luận:
+Có, len có thể có độ dài bất kỳ.
+Chế độ CTR không yêu cầu padding, vì vậy dữ liệu có thể dài bao nhiêu cũng được xử lý chính xác.
