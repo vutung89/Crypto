@@ -38,16 +38,16 @@ int main() {
 	printf("--- UAV DATALINK ENCRYPTION (AES-256 CTR) ---\n");
 
 	// 0. Hien thi thông tin gói tin trước khi mã hóa
-	printf("key (Hex): \n\r");
+	printf("Key (Hex): \n");
 	for(size_t i=0; i<32; i++) printf("%02X ", key[i]);
-	printf("\n");	
-	printf("nonce (Hex): \n\r");
+	printf("\n\r");	
+	printf("Nonce (Hex): \n");
 	for(size_t i=0; i<16; i++) printf("%02X ", nonce[i]);
-	printf("\n");
+	printf("\n\r");
 
-	printf("Data (Hex): \n\r");
+	printf("Data (Hex): \n");
 	for(size_t i=0; i<len; i++) printf("%02X ", telemetry_data[i]);
-	printf("\n");
+	printf("\n\r");
 
 	// 1. Khởi tạo Key
 	key_expansion(key, ctx.round_keys);
@@ -62,17 +62,17 @@ int main() {
 
 	aes256_ctr_xcrypt(&ctx, nonce_enc, buffer, len);
 
-	printf("Encrypted (Hex): \n\r");
+	printf("Encrypted (Hex): \n");
 	for(size_t i=0; i<len; i++) printf("%02X ", buffer[i]);
-	printf("\n");
+	printf("\n\r");
 
 	// 3. Decryption (Dùng lại chính hàm đó với CTR)
 	aes256_ctr_xcrypt(&ctx, nonce_dec, buffer, len);
 	buffer[len] = '\0';
 
-	printf("Decrypted (Hex): \n\r");
+	printf("Decrypted (Hex): \n");
 	for(size_t i=0; i<len; i++) printf("%02X ", buffer[i]);
-	printf("\n");
+	printf("\n\r");
 
 	return 0;
 }
